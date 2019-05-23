@@ -28,11 +28,11 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
-    <!--<dependency>-->
-      <!--<groupId>org.json</groupId>-->
-      <!--<artifactId>json</artifactId>-->
-      <!--<version>20180130</version>-->
-    <!--</dependency>-->
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20180130</version>
+    </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -119,4 +119,15 @@
     </pluginManagement>
     <finalName>ROOT</finalName>
   </build>
+
+  <repositories>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>bintray-patriques82-maven</id>
+      <name>bintray</name>
+      <url>https://dl.bintray.com/patriques82/maven</url>
+    </repository>
+  </repositories>
 </project>
