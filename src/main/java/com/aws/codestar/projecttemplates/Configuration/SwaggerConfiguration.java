@@ -33,7 +33,7 @@ public class SwaggerConfiguration {
         .title("Currency Exchange API")
         .description("This panel allow you to test all possibilities of Currency Exchange API.")
         .version("1.0.0")
-        .contact(new Contact("Barbara Mrugalska", "http://bm", "barbara.mrugalska@gmail.com"))
+        .contact(new Contact("Barbara Mrugalska", "http://exchange-servicapp.gre5dcxh5s.us-east-1.elasticbeanstalk.com", "barbara.mrugalska@gmail.com"))
         .build();
   }
 }

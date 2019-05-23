@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api(value = "/currencyservice", description = "Available operations for currency exchange service", tags = {"CurrencyService"})
+@Api(value = "/", description = "Available operations for currency exchange service", tags = {"CurrencyService"})
 @RestController
-@RequestMapping("/currencyservice")
+@RequestMapping("/")
 @CrossOrigin
 public class CurrencyController {
 
