@@ -189,4 +189,3 @@ public enum Currencies {
     return Symbol;
   }
 }
-

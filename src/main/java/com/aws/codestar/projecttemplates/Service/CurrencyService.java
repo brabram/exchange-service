@@ -33,10 +33,10 @@ public class CurrencyService {
   public Exchange getRateFromGivenCurrencies(String from, String to) {
     log.debug("Getting rate for symbols: from: {} - to: {}", from, to);
 //    if (isSymbolPresentOnTheList(from) && isSymbolPresentOnTheList(to)) {
-      CurrencyExchange currencyExchange = foreignExchange.currencyExchangeRate(from, to);
-      CurrencyExchangeData currencyExchangeData = currencyExchange.getData();
-      float rate = currencyExchangeData.getExchangeRate();
-      return new Exchange(from, to, rate);
+    CurrencyExchange currencyExchange = foreignExchange.currencyExchangeRate(from, to);
+    CurrencyExchangeData currencyExchangeData = currencyExchange.getData();
+    float rate = currencyExchangeData.getExchangeRate();
+    return new Exchange(from, to, rate);
 //    }
 //    return new Exchange(from, to, -1);
   }
@@ -82,4 +82,3 @@ public class CurrencyService {
     return new ArrayList<>();
   }
 }
-

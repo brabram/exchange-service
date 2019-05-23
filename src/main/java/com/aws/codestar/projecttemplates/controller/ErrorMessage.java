@@ -52,5 +52,4 @@ public class ErrorMessage {
   public String toString() {
     return String.format("message : %s, details : %s", message, details);
   }
-
 }

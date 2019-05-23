@@ -15,5 +15,4 @@ public class ApplicationConfiguration {
   public ForeignExchange getForeignExchange() {
     return new ForeignExchange(new AlphaVantageConnector(apiKey, timeout));
   }
-
 }
