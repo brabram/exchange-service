@@ -1,5 +1,7 @@
 package com.aws.codestar.projecttemplates.Configuration;
 
+import com.aws.codestar.projecttemplates.Model.ForexDataMapper;
+import com.aws.codestar.projecttemplates.Model.ForexDataMapperImpl;
 import org.patriques.AlphaVantageConnector;
 import org.patriques.ForeignExchange;
 import org.springframework.context.annotation.Bean;
@@ -14,5 +16,9 @@ public class ApplicationConfiguration {
   @Bean
   public ForeignExchange getForeignExchange() {
     return new ForeignExchange(new AlphaVantageConnector(apiKey, timeout));
+  }
+  @Bean
+  public ForexDataMapper getForexDataMapper(){
+    return new ForexDataMapperImpl();
   }
 }
