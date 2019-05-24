@@ -80,8 +80,8 @@ public class CurrencyController {
   @ApiImplicitParams(value = {
       @ApiImplicitParam(name = "from", value = "Currency symbol", example = "EUR"),
       @ApiImplicitParam(name = "to", value = "Currency symbol", example = "PLN"),
-      @ApiImplicitParam(name = "fromDate", value = "data", example = "2018-05-26"),
-      @ApiImplicitParam(name = "toDate", value = "data", example = "2019-05-26")})
+      @ApiImplicitParam(name = "fromDate", value = "date", example = "2019-05-20"),
+      @ApiImplicitParam(name = "toDate", value = "date", example = "2019-05-26")})
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK", response = ForexData.class),
       @ApiResponse(code = 404, message = "Not found passed 'from' or 'to' symbol.", response = ErrorMessage.class),

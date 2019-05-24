@@ -30,7 +30,7 @@ public class SwaggerConfiguration {
 
   private ApiInfo apiInfo() {
     return new ApiInfoBuilder()
-        .title("Currency CurrencyExchangeData API")
+        .title("Currency Exchange API")
         .description("This panel allow you to test all possibilities of Currency CurrencyExchangeData API.")
         .version("1.0.0")
         .contact(new Contact("Barbara Mrugalska", "http://exchange-servicapp.gre5dcxh5s.us-east-1.elasticbeanstalk.com", "barbara.mrugalska@gmail.com"))
