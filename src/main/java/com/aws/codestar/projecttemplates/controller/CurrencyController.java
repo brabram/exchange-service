@@ -43,10 +43,10 @@ public class CurrencyController {
   @GetMapping("/from={from}/to={to}")
   @ApiOperation(
       value = "Get rate for given currencies.",
-      response = Float.class)
+      response = CurrencyExchangeData.class)
   @ApiImplicitParams(value = {
-      @ApiImplicitParam(name = "from", value = "Currency symbol from list", example = "EUR"),
-      @ApiImplicitParam(name = "to", value = "Currency symbol from list", example = "PLN")})
+      @ApiImplicitParam(name = "from", value = "Currency symbol", example = "EUR"),
+      @ApiImplicitParam(name = "to", value = "Currency symbol", example = "PLN")})
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "OK", response = CurrencyExchangeData.class),
 //      @ApiResponse(code = 404, message = "Rate not found for passed from or to.", response = ErrorMessage.class),
@@ -71,12 +71,12 @@ public class CurrencyController {
       value = "Get historical data for given currencies and range.",
       response = ForexData.class)
   @ApiImplicitParams(value = {
-      @ApiImplicitParam(name = "from", value = "Currency symbol from list", example = "EUR"),
-      @ApiImplicitParam(name = "to", value = "Currency symbol from list", example = "PLN"),
-      @ApiImplicitParam(name = "fromDate", value = "data", example = "2018.05.23"),
-      @ApiImplicitParam(name = "toDate", value = "data", example = "2019.05.23")})
+      @ApiImplicitParam(name = "from", value = "Currency symbol", example = "EUR"),
+      @ApiImplicitParam(name = "to", value = "Currency symbol", example = "PLN"),
+      @ApiImplicitParam(name = "fromDate", value = "data", example = "2018-05-26"),
+      @ApiImplicitParam(name = "toDate", value = "data", example = "2019-05-26")})
   @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "OK", response = com.aws.codestar.projecttemplates.Model.ForexData.class),
+      @ApiResponse(code = 200, message = "OK", response = ForexData.class),
 //      @ApiResponse(code = 404, message = "Rate not found for passed from or to.", response = ErrorMessage.class),
       @ApiResponse(code = 500, message = "Internal server error.", response = ErrorMessage.class)})
   public ResponseEntity<?> getHistoricalData(
@@ -85,7 +85,7 @@ public class CurrencyController {
       @PathVariable("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
       @PathVariable("toDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
     try {
-      log.debug("Getting rate by currencies: {} - {}", from, to);
+      log.debug("Getting rate for currencies: {} - {}", from, to);
 //      if (currencyService.getRateFromGivenCurrencies(from.getSymbol(), to.getSymbol()).getRate() != 0) {
       List<ForexData> forexDataList =
           currencyService.getHistoricalDataForGivenCurrenciesAndRange(
