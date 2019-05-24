@@ -57,18 +57,12 @@ public class CurrencyService {
       throw new IllegalArgumentException("'to' symbol cannot be null");
     }
     log.debug("Getting rate for symbols: from: {} - to: {}", from, to);
-    if (!isSymbolPresentOnTheList(from)) {
-      throw new IllegalArgumentException("unsupported 'from' symbol");
-    }
-    if (!isSymbolPresentOnTheList(to)) {
-      throw new IllegalArgumentException("unsupported 'to' symbol");
-    }
     CurrencyExchange currencyExchange = foreignExchange.currencyExchangeRate(from, to);
     org.patriques.output.exchange.data.CurrencyExchangeData currencyExchangeData = currencyExchange.getData();
     return currencyExchangeDataMapper.mapExchange(currencyExchangeData);
   }
 
-  private Boolean isSymbolPresentOnTheList(String symbol) throws ServiceOperationException {
+  public Boolean isCurrencySupported(String symbol) throws ServiceOperationException {
     for (String currency : getSupportedCurrencies()) {
       if (currency.equals(symbol)) {
         return true;
@@ -95,6 +89,8 @@ public class CurrencyService {
       throw new IllegalArgumentException("'toDate' cannot be before 'fromDate'.");
     }
     try {
+      log.debug("Getting forex data for symbols: from: {} - to: {}, and dates: fromDate: {} - toDate: {} ",
+          from, to, fromDate, toDate);
       Daily response = foreignExchange.daily(from, to, OutputSize.FULL);
       List<org.patriques.output.exchange.data.ForexData> forexDataFromApi = response.getForexData();
       List<ForexData> forexData = new ArrayList<>();
@@ -115,6 +111,7 @@ public class CurrencyService {
 
   public Set<String> getSupportedCurrencies() throws ServiceOperationException {
     try {
+      log.debug("Getting supported currencies");
       HttpResponse<JsonNode> jsonResponse = Unirest.get("https://openexchangerates.org/api/currencies.json")
           .asJson();
       return jsonResponse.getBody().getObject().keySet();
