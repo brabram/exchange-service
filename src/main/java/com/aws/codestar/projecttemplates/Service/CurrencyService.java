@@ -8,7 +8,9 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -49,45 +51,28 @@ public class CurrencyService {
     this.forexDataMapper = forexDataMapper;
   }
 
+  public Set<String> getSupportedCurrencies() throws ServiceOperationException {
+    try {
+      log.debug("Getting supported currencies");
+      HttpResponse<JsonNode> jsonResponse = Unirest.get("https://openexchangerates.org/api/currencies.json")
+          .asJson();
+      return jsonResponse.getBody().getObject().keySet();
+    } catch (UnirestException e) {
+      String message = "An error while getting supported currencies";
+      log.error(message, e);
+      throw new ServiceOperationException(message, e);
+    }
+  }
+
   public CurrencyExchangeData getRateFromGivenCurrencies(String from, String to) throws ServiceOperationException {
-    if (from.equals("")) {
-      throw new IllegalArgumentException("'from' symbol cannot be null");
-    }
-    if (to.equals("")) {
-      throw new IllegalArgumentException("'to' symbol cannot be null");
-    }
     log.debug("Getting rate for symbols: from: {} - to: {}", from, to);
     CurrencyExchange currencyExchange = foreignExchange.currencyExchangeRate(from, to);
     org.patriques.output.exchange.data.CurrencyExchangeData currencyExchangeData = currencyExchange.getData();
     return currencyExchangeDataMapper.mapExchange(currencyExchangeData);
   }
 
-  public Boolean isCurrencySupported(String symbol) throws ServiceOperationException {
-    for (String currency : getSupportedCurrencies()) {
-      if (currency.equals(symbol)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   public List<ForexData> getHistoricalDataForGivenCurrenciesAndRange(
-      String from, String to, LocalDateTime fromDate, LocalDateTime toDate) throws ServiceOperationException {
-    if (from.equals("")) {
-      throw new IllegalArgumentException("'from' symbol cannot be null");
-    }
-    if (to.equals("")) {
-      throw new IllegalArgumentException("'to' symbol cannot be null");
-    }
-    if (fromDate == null) {
-      throw new IllegalArgumentException("'fromDate' cannot be null");
-    }
-    if (toDate == null) {
-      throw new IllegalArgumentException("'toDate' cannot be null");
-    }
-    if (toDate.isBefore(fromDate)) {
-      throw new IllegalArgumentException("'toDate' cannot be before 'fromDate'.");
-    }
+      String from, String to, LocalDate fromDate, LocalDate toDate) throws ServiceOperationException {
     try {
       log.debug("Getting forex data for symbols: from: {} - to: {}, and dates: fromDate: {} - toDate: {} ",
           from, to, fromDate, toDate);
@@ -100,7 +85,7 @@ public class CurrencyService {
       return forexData
           .stream()
           .filter(data -> data.getDateTime()
-              .compareTo(toDate) <= 0 && data.getDateTime().compareTo(fromDate.minusDays(1L)) >= 0)
+              .compareTo(convertToLocalDateTime(toDate)) <= 0 && data.getDateTime().compareTo(convertToLocalDateTime(fromDate.minusDays(1L))) >= 0)
           .collect(Collectors.toList());
     } catch (AlphaVantageException e) {
       String message = "An error while getting forex data";
@@ -109,16 +94,32 @@ public class CurrencyService {
     }
   }
 
-  public Set<String> getSupportedCurrencies() throws ServiceOperationException {
-    try {
-      log.debug("Getting supported currencies");
-      HttpResponse<JsonNode> jsonResponse = Unirest.get("https://openexchangerates.org/api/currencies.json")
-          .asJson();
-      return jsonResponse.getBody().getObject().keySet();
-    } catch (UnirestException e) {
-      String message = "An error while getting supported currencies";
-      log.error(message, e);
-      throw new ServiceOperationException(message, e);
+  private LocalDateTime convertToLocalDateTime(LocalDate date) {
+    return date.atTime(LocalTime.now());
+  }
+
+  public Boolean validateSymbol(String symbol) throws ServiceOperationException {
+    if (symbol.equals("")) {
+      return false;
     }
+    for (String currency : getSupportedCurrencies()) {
+      if (currency.equals(symbol)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public String validateDate(LocalDate fromDate, LocalDate toDate) throws ServiceOperationException {
+    if (fromDate == null) {
+      return "from date cannot be null";
+    }
+    if (toDate == null) {
+      return "to date cannot be null";
+    }
+    if (fromDate.isAfter(toDate)) {
+      return "to date cannot be after from date";
+    }
+    return null;
   }
 }

@@ -1,4 +1,4 @@
-package com.aws.codestar.projecttemplates.controller;
+package com.aws.codestar.projecttemplates.Controller;
 
 import com.aws.codestar.projecttemplates.Model.CurrencyExchangeData;
 import com.aws.codestar.projecttemplates.Model.ForexData;
@@ -10,7 +10,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -40,83 +39,7 @@ public class CurrencyController {
     this.currencyService = currencyService;
   }
 
-  @GetMapping("/from={from}/to={to}")
-  @ApiOperation(
-      value = "Get rate for given currencies.",
-      response = CurrencyExchangeData.class)
-  @ApiImplicitParams(value = {
-      @ApiImplicitParam(name = "from", value = "Currency symbol", example = "EUR"),
-      @ApiImplicitParam(name = "to", value = "Currency symbol", example = "PLN")})
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "OK", response = CurrencyExchangeData.class),
-      @ApiResponse(code = 404, message = "Not found passed 'from' or 'to' symbol.", response = ErrorMessage.class),
-      @ApiResponse(code = 500, message = "Internal server error.", response = ErrorMessage.class)})
-  public ResponseEntity<?> getRate(@PathVariable("from") String from, @PathVariable("to") String to) {
-    try {
-      log.debug("Getting rate for currencies: {} - {}", from, to);
-      if (!currencyService.isCurrencySupported(from)) {
-        String message = String.format("Not found passed symbol: %s", from);
-        log.debug(message);
-        return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.NOT_FOUND);
-      }
-      if (!currencyService.isCurrencySupported(to)) {
-        String message = String.format("Not found passed symbol: %s", to);
-        log.debug(message);
-        return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.NOT_FOUND);
-      }
-      CurrencyExchangeData exchange = currencyService.getRateFromGivenCurrencies(from, to);
-      return new ResponseEntity<>(exchange, HttpStatus.OK);
-    } catch (Exception e) {
-      String message = String.format("Internal server error while getting rate for currencies: %s, %s", from, to);
-      log.error(message, e);
-      return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  @GetMapping("/from={from}/to={to}/fromDate={fromDate}/toDate={toDate}")
-  @ApiOperation(
-      value = "Get historical data for given currencies and range.",
-      response = ForexData.class)
-  @ApiImplicitParams(value = {
-      @ApiImplicitParam(name = "from", value = "Currency symbol", example = "EUR"),
-      @ApiImplicitParam(name = "to", value = "Currency symbol", example = "PLN"),
-      @ApiImplicitParam(name = "fromDate", value = "date", example = "2019-05-20"),
-      @ApiImplicitParam(name = "toDate", value = "date", example = "2019-05-26")})
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "OK", response = ForexData.class),
-      @ApiResponse(code = 404, message = "Not found passed 'from' or 'to' symbol.", response = ErrorMessage.class),
-      @ApiResponse(code = 500, message = "Internal server error.", response = ErrorMessage.class)})
-  public ResponseEntity<?> getHistoricalData(
-      @PathVariable("from") String from,
-      @PathVariable("to") String to,
-      @PathVariable("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
-      @PathVariable("toDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
-    try {
-      log.debug("Getting forex data for symbols: from: {} - to: {}, and dates: fromDate: {} - toDate: {} ",
-          from, to, fromDate, toDate);
-      if (!currencyService.isCurrencySupported(from)) {
-        String message = String.format("Not found passed symbol: %s", from);
-        log.debug(message);
-        return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.NOT_FOUND);
-      }
-      if (!currencyService.isCurrencySupported(to)) {
-        String message = String.format("Not found passed symbol: %s", to);
-        log.debug(message);
-        return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.NOT_FOUND);
-      }
-      List<ForexData> forexDataList =
-          currencyService.getHistoricalDataForGivenCurrenciesAndRange(
-              from, to, fromDate.atTime(LocalTime.now()), toDate.atTime(LocalTime.now()));
-      return new ResponseEntity<>(forexDataList, HttpStatus.OK);
-    } catch (Exception e) {
-      String message = String.format("Internal server error while getting forex data for currencies: %s, %s, and dates: %s, %s",
-          from, to, fromDate, toDate);
-      log.error(message, e);
-      return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  @GetMapping("/getAllCurrencies")
+  @GetMapping("getAllCurrencies")
   @ApiOperation(
       value = "Get all supported currencies.",
       response = Json.class)
@@ -130,6 +53,87 @@ public class CurrencyController {
       return new ResponseEntity<>(currencies, HttpStatus.OK);
     } catch (Exception e) {
       String message = "Internal server error while getting all currencies";
+      log.error(message, e);
+      return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @GetMapping("from={from}/to={to}")
+  @ApiOperation(
+      value = "Get rate for given currencies.",
+      response = CurrencyExchangeData.class)
+  @ApiImplicitParams(value = {
+      @ApiImplicitParam(name = "from", value = "Currency symbol (only capital leteres)", example = "EUR"),
+      @ApiImplicitParam(name = "to", value = "Currency symbol (only capital leteres)", example = "PLN")})
+  @ApiResponses(value = {
+      @ApiResponse(code = 200, message = "OK", response = CurrencyExchangeData.class),
+      @ApiResponse(code = 404, message = "Not found passed 'from' or 'to' symbol.", response = ErrorMessage.class),
+      @ApiResponse(code = 500, message = "Internal server error.", response = ErrorMessage.class)})
+  public ResponseEntity<?> getRate(@PathVariable("from") String from, @PathVariable("to") String to) {
+    try {
+      log.debug("Getting rate for currencies: {} - {}", from, to);
+      if (!currencyService.validateSymbol(from)) {
+        String message = String.format("Not found passed symbol: %s", from);
+        log.debug(message);
+        return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.NOT_FOUND);
+      }
+      if (!currencyService.validateSymbol(to)) {
+        String message = String.format("Not found passed symbol: %s", to);
+        log.debug(message);
+        return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.NOT_FOUND);
+      }
+      CurrencyExchangeData exchange = currencyService.getRateFromGivenCurrencies(from, to);
+      return new ResponseEntity<>(exchange, HttpStatus.OK);
+    } catch (Exception e) {
+      String message = String.format("Internal server error while getting rate for currencies: %s, %s", from, to);
+      log.error(message, e);
+      return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @GetMapping("from={from}/to={to}/fromDate={fromDate}/toDate={toDate}")
+  @ApiOperation(
+      value = "Get historical data for given currencies and range.",
+      response = ForexData.class)
+  @ApiImplicitParams(value = {
+      @ApiImplicitParam(name = "from", value = "Currency symbol (only capital leteres)", example = "EUR"),
+      @ApiImplicitParam(name = "to", value = "Currency symbol (only capital leteres)", example = "PLN"),
+      @ApiImplicitParam(name = "fromDate", value = "date in format YYYY-MM-DD", example = "2019-05-20"),
+      @ApiImplicitParam(name = "toDate", value = "date in format YYYY-MM-DD", example = "2019-05-26")})
+  @ApiResponses(value = {
+      @ApiResponse(code = 200, message = "OK", response = ForexData.class),
+      @ApiResponse(code = 404, message = "Not found passed 'from' or 'to' symbol.", response = ErrorMessage.class),
+      @ApiResponse(code = 500, message = "Internal server error.", response = ErrorMessage.class)})
+  public ResponseEntity<?> getHistoricalData(
+      @PathVariable("from") String from,
+      @PathVariable("to") String to,
+      @PathVariable("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+      @PathVariable("toDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
+    try {
+      log.debug("Getting forex data for symbols: from: {} - to: {}, and dates: fromDate: {} - toDate: {} ",
+          from, to, fromDate, toDate);
+      if (!currencyService.validateSymbol(from)) {
+        String message = String.format("Not found passed symbol: %s", from);
+        log.debug(message);
+        return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.NOT_FOUND);
+      }
+      if (!currencyService.validateSymbol(to)) {
+        String message = String.format("Not found passed symbol: %s", to);
+        log.debug(message);
+        return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.NOT_FOUND);
+      }
+      if (currencyService.validateDate(fromDate, toDate) != null){
+        String message = String.format("Passed dates are incorrect: %s, %s", fromDate, toDate);
+        log.debug(message);
+        return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.NOT_FOUND);
+      }
+      List<ForexData> forexDataList =
+          currencyService.getHistoricalDataForGivenCurrenciesAndRange(
+              from, to, fromDate, toDate);
+      return new ResponseEntity<>(forexDataList, HttpStatus.OK);
+    } catch (Exception e) {
+      String message = String.format("Internal server error while getting forex data for currencies: %s, %s, and dates: %s, %s",
+          from, to, fromDate, toDate);
       log.error(message, e);
       return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.INTERNAL_SERVER_ERROR);
     }

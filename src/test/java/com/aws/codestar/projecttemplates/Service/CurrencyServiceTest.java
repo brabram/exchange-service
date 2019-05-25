@@ -1,12 +1,12 @@
 //
-//package com.aws.codestar.projecttemplates.controller.Service;
+//package com.aws.codestar.projecttemplates.Controller.Service;
 //
 //import static org.junit.jupiter.api.Assertions.assertEquals;
 //import static org.mockito.Mockito.verify;
 //import static org.mockito.Mockito.when;
 //
 //import com.aws.codestar.projecttemplates.Configuration.ApplicationConfiguration;
-//import com.aws.codestar.projecttemplates.Model.Exchange;
+//import com.aws.codestar.projecttemplates.Model.CurrencyExchangeData;
 //import com.aws.codestar.projecttemplates.Service.CurrencyService;
 //import org.junit.jupiter.api.Test;
 //import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,13 +36,13 @@
 //    String from = "USD";
 //    String to = "PLN";
 //    float rate = getRateFromAPI(from, to);
-//    Exchange exchange = new Exchange(from, to, rate);
+//    CurrencyExchangeData exchange = new CurrencyExchangeData(from, to, rate);
 //    when(currencyExchangeData.getExchangeRate()).thenReturn(rate);
 //    when(currencyExchange.getData()).thenReturn(currencyExchangeData);
 //    when(foreignExchange.currencyExchangeRate(from, to)).thenReturn(currencyExchange);
 //
 //    //When
-//    Exchange actualExchange = currencyService.getRateFromGivenCurrencies(from, to);
+//    CurrencyExchangeData actualExchange = currencyService.getRateFromGivenCurrencies(from, to);
 //
 //    //Then
 //    assertEquals(exchange, actualExchange);

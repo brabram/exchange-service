@@ -1,6 +1,5 @@
 package com.aws.codestar.projecttemplates.Model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -25,8 +24,10 @@ public class ForexData {
   public ForexData() {
   }
 
-  @JsonCreator
-  public ForexData(LocalDateTime dateTime, double open, double high, double low, double close) {
+//  @JsonCreator
+  public ForexData(/*@JsonProperty("dateTime")*/ LocalDateTime dateTime,
+      /*@JsonProperty("open")*/ double open, /*@JsonProperty("high") */double high,
+      /*@JsonProperty("low") */double low,/* @JsonProperty("close")*/ double close) {
     this.dateTime = dateTime;
     this.open = open;
     this.high = high;
@@ -97,7 +98,7 @@ public class ForexData {
 
   @Override
   public String toString() {
-    return "ForexData{" +
+    return "{" +
         "dateTime=" + dateTime +
         ", open=" + open +
         ", high=" + high +

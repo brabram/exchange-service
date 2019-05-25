@@ -5,11 +5,11 @@
   <artifactId>ExchangeService</artifactId>
   <version>1.0</version>
   <packaging>war</packaging>
-  <name>Sample Java Spring web service Using AWS CodeStar</name>
+  <name>Currency Exchange Service</name>
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.0.3.RELEASE</version>
+    <version>2.1.5.RELEASE</version>
   </parent>
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -58,7 +58,6 @@
       <groupId>org.patriques</groupId>
       <artifactId>alphavantage4j</artifactId>
       <version>1.4</version>
-      <!--<type>pom</type>-->
     </dependency>
     <dependency>
       <groupId>io.springfox</groupId>
@@ -81,16 +80,6 @@
       <artifactId>mockito-junit-jupiter</artifactId>
       <version>2.27.0</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
