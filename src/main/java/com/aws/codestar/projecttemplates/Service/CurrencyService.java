@@ -65,18 +65,50 @@ public class CurrencyService {
   }
 
   public CurrencyExchangeData getRateFromGivenCurrencies(String from, String to) throws ServiceOperationException {
-    log.debug("Getting rate for symbols: from: {} - to: {}", from, to);
-    CurrencyExchange currencyExchange = foreignExchange.currencyExchangeRate(from, to);
-    org.patriques.output.exchange.data.CurrencyExchangeData currencyExchangeData = currencyExchange.getData();
-    return currencyExchangeDataMapper.mapExchange(currencyExchangeData);
+    try {
+      if (from.equals("")) {
+        throw new IllegalArgumentException("from symbol cannot be null");
+      }
+      if (to.equals("")) {
+        throw new IllegalArgumentException("to symbol cannot be null");
+      }
+      log.debug("Getting rate for symbols: from: {} - to: {}", from, to);
+      CurrencyExchange currencyExchange = foreignExchange.currencyExchangeRate(from, to);
+      org.patriques.output.exchange.data.CurrencyExchangeData currencyExchangeData = currencyExchange.getData();
+      return currencyExchangeDataMapper.mapExchange(currencyExchangeData);
+    } catch (AlphaVantageException e) {
+      String message = String.format("An error while getting rate for symbols: from %s - to %s", from, to);
+      log.error(message, e);
+      throw new ServiceOperationException(message, e);
+    }
   }
 
   public List<ForexData> getHistoricalDataForGivenCurrenciesAndRange(
       String from, String to, LocalDate fromDate, LocalDate toDate) throws ServiceOperationException {
     try {
+      if (from.equals("")) {
+        throw new IllegalArgumentException("from symbol cannot be null");
+      }
+      if (to.equals("")) {
+        throw new IllegalArgumentException("to symbol cannot be null");
+      }
+      if (fromDate == null) {
+        throw new IllegalArgumentException("fromDate cannot be null");
+      }
+      if (toDate == null) {
+        throw new IllegalArgumentException("toDate cannot be null");
+      }
+      if (fromDate.isAfter(toDate)) {
+        throw new IllegalArgumentException("to date cannot be after from date");
+      }
       log.debug("Getting forex data for symbols: from: {} - to: {}, and dates: fromDate: {} - toDate: {} ",
           from, to, fromDate, toDate);
-      Daily response = foreignExchange.daily(from, to, OutputSize.FULL);
+      Daily response;
+      if (toDate.minusDays(101).isAfter(fromDate)) {
+        response = foreignExchange.daily(from, to, OutputSize.FULL);
+      }else {
+        response = foreignExchange.daily(from, to, OutputSize.COMPACT);
+      }
       List<org.patriques.output.exchange.data.ForexData> forexDataFromApi = response.getForexData();
       List<ForexData> forexData = new ArrayList<>();
       for (org.patriques.output.exchange.data.ForexData fx : forexDataFromApi) {
@@ -85,10 +117,13 @@ public class CurrencyService {
       return forexData
           .stream()
           .filter(data -> data.getDateTime()
-              .compareTo(convertToLocalDateTime(toDate)) <= 0 && data.getDateTime().compareTo(convertToLocalDateTime(fromDate.minusDays(1L))) >= 0)
+              .compareTo(convertToLocalDateTime(toDate)) <= 0 && data.getDateTime()
+              .compareTo(convertToLocalDateTime(fromDate.minusDays(1L))) >= 0)
           .collect(Collectors.toList());
     } catch (AlphaVantageException e) {
-      String message = "An error while getting forex data";
+      String message = String.format(
+          "An error while getting forex data for symbols: from: %s - to: %s, and dates: fromDate: %s - toDate: %s",
+          from, to, fromDate, toDate);
       log.error(message, e);
       throw new ServiceOperationException(message, e);
     }
@@ -102,7 +137,8 @@ public class CurrencyService {
     if (symbol.equals("")) {
       return "currency symbol cannot be null";
     }
-    for (String currency : getSupportedCurrencies()) {
+    List<String> supportedSymbols = new ArrayList<>(getSupportedCurrencies());
+    for (String currency : supportedSymbols) {
       if (currency.equals(symbol)) {
         return null;
       }
@@ -110,7 +146,7 @@ public class CurrencyService {
     return String.format("Passed symbol is incorrect: %s", symbol);
   }
 
-  public String validateDate(LocalDate fromDate, LocalDate toDate) throws ServiceOperationException {
+  public String validateDate(LocalDate fromDate, LocalDate toDate) {
     if (fromDate == null) {
       return "from date cannot be null";
     }

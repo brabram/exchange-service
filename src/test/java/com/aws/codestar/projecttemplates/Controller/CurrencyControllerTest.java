@@ -327,5 +327,4 @@ class CurrencyControllerTest {
     assertEquals(expectedResponse, actualResponse);
     verify(currencyService).getHistoricalDataForGivenCurrenciesAndRange(from, to, fromDate, toDate);
   }
-
 }
