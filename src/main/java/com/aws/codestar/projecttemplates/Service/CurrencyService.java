@@ -98,16 +98,16 @@ public class CurrencyService {
     return date.atTime(LocalTime.now());
   }
 
-  public Boolean validateSymbol(String symbol) throws ServiceOperationException {
+  public String validateSymbol(String symbol) throws ServiceOperationException {
     if (symbol.equals("")) {
-      return false;
+      return "currency symbol cannot be null";
     }
     for (String currency : getSupportedCurrencies()) {
       if (currency.equals(symbol)) {
-        return true;
+        return null;
       }
     }
-    return false;
+    return String.format("Passed symbol is incorrect: %s", symbol);
   }
 
   public String validateDate(LocalDate fromDate, LocalDate toDate) throws ServiceOperationException {

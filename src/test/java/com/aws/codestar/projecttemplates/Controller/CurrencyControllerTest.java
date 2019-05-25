@@ -59,7 +59,8 @@ class CurrencyControllerTest {
             .accept(MediaType.APPLICATION_JSON_UTF8))
         .andReturn();
     int actualHttpStatus = result.getResponse().getStatus();
-    Set<String> actualCurrencies = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<Set<String>>(){});
+    Set<String> actualCurrencies = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<Set<String>>() {
+    });
 
     //Then
     assertEquals(HttpStatus.OK.value(), actualHttpStatus);
@@ -95,8 +96,8 @@ class CurrencyControllerTest {
     String to = "USD";
     float rate = 12;
     CurrencyExchangeData exchange = new CurrencyExchangeData(from, to, rate);
-    when(currencyService.validateSymbol(from)).thenReturn(true);
-    when(currencyService.validateSymbol(to)).thenReturn(true);
+    when(currencyService.validateSymbol(from)).thenReturn(null);
+    when(currencyService.validateSymbol(to)).thenReturn(null);
     when(currencyService.getRateFromGivenCurrencies(from, to)).thenReturn(exchange);
 
     //When
@@ -121,8 +122,8 @@ class CurrencyControllerTest {
     String from = "PLN";
     String to = "XYZ";
     ErrorMessage message = new ErrorMessage(String.format("Not found passed symbol: %s", to));
-    when(currencyService.validateSymbol(from)).thenReturn(true);
-    when(currencyService.validateSymbol(to)).thenReturn(false);
+    when(currencyService.validateSymbol(from)).thenReturn(null);
+    when(currencyService.validateSymbol(to)).thenReturn("xxx");
 
     //When
     MvcResult result = mockMvc
@@ -145,7 +146,7 @@ class CurrencyControllerTest {
     String from = "XXX";
     String to = "PLN";
     ErrorMessage message = new ErrorMessage(String.format("Not found passed symbol: %s", from));
-    when(currencyService.validateSymbol(from)).thenReturn(false);
+    when(currencyService.validateSymbol(from)).thenReturn("xxx");
 
     //When
     MvcResult result = mockMvc
@@ -166,8 +167,8 @@ class CurrencyControllerTest {
     //Given
     String from = "PLN";
     String to = "EUR";
-    when(currencyService.validateSymbol("PLN")).thenReturn(true);
-    when(currencyService.validateSymbol("EUR")).thenReturn(true);
+    when(currencyService.validateSymbol("PLN")).thenReturn(null);
+    when(currencyService.validateSymbol("EUR")).thenReturn(null);
     doThrow(HttpServerErrorException.InternalServerError.class).when(currencyService).getRateFromGivenCurrencies(from, to);
     ErrorMessage expectedResponse = new ErrorMessage(String.format("Internal server error while getting rate for currencies: %s, %s",
         from, to));
@@ -194,12 +195,13 @@ class CurrencyControllerTest {
     LocalDate fromDate = LocalDate.of(2019, 5, 20);
     LocalDate toDate = LocalDate.of(2019, 5, 21);
     List<ForexData> forexDataList = new ArrayList<>();
-    ForexData forexData = new ForexData(LocalDateTime.of(LocalDate.of(2019,5,20), LocalTime.of(0,0,0)), 3, 4, 2, 3);
-    ForexData forexData1 = new ForexData(LocalDateTime.of(LocalDate.of(2019,5,21), LocalTime.of(0,0,0)), 30, 40, 20, 30);
+    ForexData forexData = new ForexData(LocalDateTime.of(LocalDate.of(2019, 5, 20), LocalTime.of(0, 0, 0)), 3, 4, 2, 3);
+    ForexData forexData1 = new ForexData(LocalDateTime.of(LocalDate.of(2019, 5, 21), LocalTime.of(0, 0, 0)), 30, 40, 20, 30);
     forexDataList.add(forexData);
     forexDataList.add(forexData1);
-    when(currencyService.validateSymbol(from)).thenReturn(true);
-    when(currencyService.validateSymbol(to)).thenReturn(true);
+    when(currencyService.validateSymbol(from)).thenReturn(null);
+    when(currencyService.validateSymbol(to)).thenReturn(null);
+    when(currencyService.validateDate(fromDate, toDate)).thenReturn(null);
     when(currencyService.getHistoricalDataForGivenCurrenciesAndRange(from, to, fromDate, toDate)).thenReturn(forexDataList);
 
     //When
@@ -208,14 +210,122 @@ class CurrencyControllerTest {
             .accept(MediaType.APPLICATION_JSON_UTF8))
         .andReturn();
     int actualHttpStatus = result.getResponse().getStatus();
-    List<ForexData> actualForexDataList = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<ForexData>>(){});
+    List<ForexData> actualForexDataList = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<ForexData>>() {
+    });
 
     //Then
     assertEquals(HttpStatus.OK.value(), actualHttpStatus);
     assertEquals(forexDataList, actualForexDataList);
     verify(currencyService).validateSymbol(from);
     verify(currencyService).validateSymbol(to);
-    verify(currencyService).getHistoricalDataForGivenCurrenciesAndRange(from ,to, fromDate, toDate);
+    verify(currencyService).getHistoricalDataForGivenCurrenciesAndRange(from, to, fromDate, toDate);
+  }
+
+  @Test
+  void shouldReturnNotFoundStatusWhenFromSymbolIsIncorrect() throws Exception {
+    //Given
+    String from = "XXX";
+    String to = "USD";
+    LocalDate fromDate = LocalDate.of(2019, 5, 20);
+    LocalDate toDate = LocalDate.of(2019, 5, 21);
+    when(currencyService.validateSymbol(from)).thenReturn("xxx");
+    ErrorMessage expectedResponse = new ErrorMessage(String.format("Not found passed symbol: %s", from));
+
+    //When
+    MvcResult result = mockMvc
+        .perform(get(String.format("/from=%s/to=%s/fromDate=%s/toDate=%s", from, to, fromDate, toDate))
+            .accept(MediaType.APPLICATION_JSON_UTF8))
+        .andReturn();
+    int actualHttpStatus = result.getResponse().getStatus();
+    ErrorMessage actualResponse = mapper.readValue(result.getResponse().getContentAsString(), ErrorMessage.class);
+
+    //Then
+    assertEquals(HttpStatus.NOT_FOUND.value(), actualHttpStatus);
+    verify(currencyService).validateSymbol(from);
+    assertEquals(expectedResponse, actualResponse);
+  }
+
+  @Test
+  void shouldReturnNotFoundStatusWhenToSymbolIsIncorrect() throws Exception {
+    //Given
+    String from = "PLN";
+    String to = "XXX";
+    LocalDate fromDate = LocalDate.of(2019, 5, 20);
+    LocalDate toDate = LocalDate.of(2019, 5, 21);
+    when(currencyService.validateSymbol(from)).thenReturn(null);
+    when(currencyService.validateSymbol(to)).thenReturn("xxx");
+    ErrorMessage expectedResponse = new ErrorMessage(String.format("Not found passed symbol: %s", to));
+
+    //When
+    MvcResult result = mockMvc
+        .perform(get(String.format("/from=%s/to=%s/fromDate=%s/toDate=%s", from, to, fromDate, toDate))
+            .accept(MediaType.APPLICATION_JSON_UTF8))
+        .andReturn();
+    int actualHttpStatus = result.getResponse().getStatus();
+    ErrorMessage actualResponse = mapper.readValue(result.getResponse().getContentAsString(), ErrorMessage.class);
+
+    //Then
+    assertEquals(HttpStatus.NOT_FOUND.value(), actualHttpStatus);
+    verify(currencyService).validateSymbol(from);
+    verify(currencyService).validateSymbol(to);
+    assertEquals(expectedResponse, actualResponse);
+  }
+
+  @Test
+  void shouldReturnNotFoundStatusWhenFromDateIsIncorrect() throws Exception {
+    //Given
+    String from = "PLN";
+    String to = "USD";
+    LocalDate fromDate = LocalDate.of(2020, 5, 21);
+    LocalDate toDate = LocalDate.of(2019, 5, 21);
+    when(currencyService.validateSymbol(from)).thenReturn(null);
+    when(currencyService.validateSymbol(to)).thenReturn(null);
+    when(currencyService.validateDate(fromDate, toDate)).thenReturn("xxx");
+    ErrorMessage expectedResponse = new ErrorMessage(String.format("Passed dates are incorrect: %s, %s", fromDate, toDate));
+
+    //When
+    MvcResult result = mockMvc
+        .perform(get(String.format("/from=%s/to=%s/fromDate=%s/toDate=%s", from, to, fromDate, toDate))
+            .accept(MediaType.APPLICATION_JSON_UTF8))
+        .andReturn();
+    int actualHttpStatus = result.getResponse().getStatus();
+    ErrorMessage actualResponse = mapper.readValue(result.getResponse().getContentAsString(), ErrorMessage.class);
+
+    //Then
+    assertEquals(HttpStatus.NOT_FOUND.value(), actualHttpStatus);
+    verify(currencyService).validateSymbol(from);
+    verify(currencyService).validateSymbol(to);
+    verify(currencyService).validateDate(fromDate, toDate);
+    assertEquals(expectedResponse, actualResponse);
+  }
+
+  @Test
+  void shouldReturnInternalServerErrorDuringGettingForexDataWhenSomethingWentWrongOnServer() throws Exception {
+    //Given
+    String from = "PLN";
+    String to = "EUR";
+    LocalDate fromDate = LocalDate.of(2019, 5, 20);
+    LocalDate toDate = LocalDate.of(2019, 5, 21);
+    when(currencyService.validateSymbol("PLN")).thenReturn(null);
+    when(currencyService.validateSymbol("EUR")).thenReturn(null);
+    when(currencyService.validateDate(fromDate, toDate)).thenReturn(null);
+    doThrow(HttpServerErrorException.InternalServerError.class).when(currencyService)
+        .getHistoricalDataForGivenCurrenciesAndRange(from, to, fromDate, toDate);
+    ErrorMessage expectedResponse = new ErrorMessage(String.format("Internal server error while getting forex data for currencies: %s, %s, and dates: %s, %s",
+        from, to, fromDate, toDate));
+
+    //When
+    MvcResult result = mockMvc
+        .perform(get(String.format("/from=%s/to=%s/fromDate=%s/toDate=%s", from, to, fromDate, toDate))
+            .accept(MediaType.APPLICATION_JSON_UTF8))
+        .andReturn();
+    int actualHttpStatus = result.getResponse().getStatus();
+    ErrorMessage actualResponse = mapper.readValue(result.getResponse().getContentAsString(), ErrorMessage.class);
+
+    //Then
+    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), actualHttpStatus);
+    assertEquals(expectedResponse, actualResponse);
+    verify(currencyService).getHistoricalDataForGivenCurrenciesAndRange(from, to, fromDate, toDate);
   }
 
 }

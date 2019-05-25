@@ -72,12 +72,12 @@ public class CurrencyController {
   public ResponseEntity<?> getRate(@PathVariable("from") String from, @PathVariable("to") String to) {
     try {
       log.debug("Getting rate for currencies: {} - {}", from, to);
-      if (!currencyService.validateSymbol(from)) {
+      if (currencyService.validateSymbol(from) != null) {
         String message = String.format("Not found passed symbol: %s", from);
         log.debug(message);
         return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.NOT_FOUND);
       }
-      if (!currencyService.validateSymbol(to)) {
+      if (currencyService.validateSymbol(to) != null) {
         String message = String.format("Not found passed symbol: %s", to);
         log.debug(message);
         return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.NOT_FOUND);
@@ -112,12 +112,12 @@ public class CurrencyController {
     try {
       log.debug("Getting forex data for symbols: from: {} - to: {}, and dates: fromDate: {} - toDate: {} ",
           from, to, fromDate, toDate);
-      if (!currencyService.validateSymbol(from)) {
+      if (currencyService.validateSymbol(from) != null) {
         String message = String.format("Not found passed symbol: %s", from);
         log.debug(message);
         return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.NOT_FOUND);
       }
-      if (!currencyService.validateSymbol(to)) {
+      if (currencyService.validateSymbol(to) != null) {
         String message = String.format("Not found passed symbol: %s", to);
         log.debug(message);
         return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.NOT_FOUND);
