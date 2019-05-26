@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class ForexData {
+public class HistoricalData {
 
   @ApiModelProperty(value = "date of given rates", example = "2019-05-24")
   private LocalDateTime dateTime;
@@ -21,11 +21,11 @@ public class ForexData {
   @ApiModelProperty(value = "close alue of exchange rate", example = "4.304")
   private double close;
 
-  public ForexData() {
+  public HistoricalData() {
   }
 
 //  @JsonCreator
-  public ForexData(/*@JsonProperty("dateTime")*/ LocalDateTime dateTime,
+  public HistoricalData(/*@JsonProperty("dateTime")*/ LocalDateTime dateTime,
       /*@JsonProperty("open")*/ double open, /*@JsonProperty("high") */double high,
       /*@JsonProperty("low") */double low,/* @JsonProperty("close")*/ double close) {
     this.dateTime = dateTime;
@@ -83,12 +83,12 @@ public class ForexData {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ForexData forexData = (ForexData) o;
-    return Double.compare(forexData.open, open) == 0 &&
-        Double.compare(forexData.high, high) == 0 &&
-        Double.compare(forexData.low, low) == 0 &&
-        Double.compare(forexData.close, close) == 0 &&
-        Objects.equals(dateTime, forexData.dateTime);
+    HistoricalData historicalData = (HistoricalData) o;
+    return Double.compare(historicalData.open, open) == 0 &&
+        Double.compare(historicalData.high, high) == 0 &&
+        Double.compare(historicalData.low, low) == 0 &&
+        Double.compare(historicalData.close, close) == 0 &&
+        Objects.equals(dateTime, historicalData.dateTime);
   }
 
   @Override

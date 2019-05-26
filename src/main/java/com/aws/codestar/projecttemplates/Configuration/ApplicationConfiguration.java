@@ -1,7 +1,7 @@
 package com.aws.codestar.projecttemplates.Configuration;
 
-import com.aws.codestar.projecttemplates.Model.ForexDataMapper;
-import com.aws.codestar.projecttemplates.Model.ForexDataMapperImpl;
+import com.aws.codestar.projecttemplates.Model.HistoricalDataMapper;
+import com.aws.codestar.projecttemplates.Model.HistoricalDataMapperImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -14,17 +14,16 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 public class ApplicationConfiguration {
 
-  private final String apiKey = "api.key";
-  private int timeout = 3000;
-
   @Bean
   public ForeignExchange getForeignExchange() {
+    String apiKey = "api.key";
+    int timeout = 3000;
     return new ForeignExchange(new AlphaVantageConnector(apiKey, timeout));
   }
 
   @Bean
-  public ForexDataMapper getForexDataMapper(){
-    return new ForexDataMapperImpl();
+  public HistoricalDataMapper getForexDataMapper(){
+    return new HistoricalDataMapperImpl();
   }
 
   @Bean

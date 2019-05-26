@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 
-public class CurrencyExchangeData {
+public class ExchangeData {
 
   @ApiModelProperty(value = "currency symbol", example = "EUR")
   private String from;
@@ -16,11 +16,11 @@ public class CurrencyExchangeData {
   @ApiModelProperty(value = "exchange rate", example = "4.2923")
   private float rate;
 
-  public CurrencyExchangeData() {
+  public ExchangeData() {
   }
 
   @JsonCreator
-  public CurrencyExchangeData(@JsonProperty("from") String from, @JsonProperty("to") String to, @JsonProperty("rate") float rate) {
+  public ExchangeData(@JsonProperty("from") String from, @JsonProperty("to") String to, @JsonProperty("rate") float rate) {
     this.from = from;
     this.to = to;
     this.rate = rate;
@@ -58,10 +58,10 @@ public class CurrencyExchangeData {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    CurrencyExchangeData currencyExchangeData = (CurrencyExchangeData) o;
-    return Float.compare(currencyExchangeData.rate, rate) == 0 &&
-        Objects.equals(from, currencyExchangeData.from) &&
-        Objects.equals(to, currencyExchangeData.to);
+    ExchangeData exchangeData = (ExchangeData) o;
+    return Float.compare(exchangeData.rate, rate) == 0 &&
+        Objects.equals(from, exchangeData.from) &&
+        Objects.equals(to, exchangeData.to);
   }
 
   @Override
@@ -71,7 +71,7 @@ public class CurrencyExchangeData {
 
   @Override
   public String toString() {
-    return "CurrencyExchangeData{" +
+    return "ExchangeData{" +
         "from='" + from + '\'' +
         ", to='" + to + '\'' +
         ", rate=" + rate +
