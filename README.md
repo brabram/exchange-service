@@ -1,7 +1,7 @@
 Exchange Currency Service
 ==============================================
 
-Java web service deployed by AWS Elastic Beanstalk and AWS CloudFormation. If you want to test service as a developer just clisk here [] (http://exchange-servicapp.gre5dcxh5s.us-east-1.elasticbeanstalk.com/swagger-ui.html#)
+Java web service deployed by AWS Elastic Beanstalk and AWS CloudFormation. If you want to test service as a developer just clisk here [](http://exchange-servicapp.gre5dcxh5s.us-east-1.elasticbeanstalk.com/swagger-ui.html#)
 
 What's Here
 -----------

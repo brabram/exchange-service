@@ -2,6 +2,8 @@ package com.aws.codestar.projecttemplates.Configuration;
 
 import com.aws.codestar.projecttemplates.Model.HistoricalDataMapper;
 import com.aws.codestar.projecttemplates.Model.HistoricalDataMapperImpl;
+import com.aws.codestar.projecttemplates.Model.SupportedCurrencySymbols;
+import com.aws.codestar.projecttemplates.Validator.ArgumentValidator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -24,6 +26,11 @@ public class ApplicationConfiguration {
   @Bean
   public HistoricalDataMapper getForexDataMapper(){
     return new HistoricalDataMapperImpl();
+  }
+
+  @Bean
+  public ArgumentValidator getArgumentValidator(){
+    return new ArgumentValidator(new SupportedCurrencySymbols());
   }
 
   @Bean

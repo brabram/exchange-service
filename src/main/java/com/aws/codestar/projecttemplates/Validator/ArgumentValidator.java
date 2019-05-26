@@ -5,11 +5,13 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ArgumentValidator {
 
   private SupportedCurrencySymbols supportedCurrencySymbols;
 
+  @Autowired
   public ArgumentValidator(SupportedCurrencySymbols supportedCurrencySymbols) {
     this.supportedCurrencySymbols = supportedCurrencySymbols;
   }
