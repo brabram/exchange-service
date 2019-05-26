@@ -33,11 +33,14 @@ public class CurrencyService {
   private final ExchangeDataMapper exchangeDataMapper;
   private final HistoricalDataMapper historicalDataMapper;
   private SupportedCurrencySymbols supportedCurrencySymbols;
+  private ArgumentValidator argumentValidator;
 
   @Autowired
   public CurrencyService(ForeignExchange foreignExchange,
       ExchangeDataMapper exchangeDataMapper,
-      HistoricalDataMapper historicalDataMapper, SupportedCurrencySymbols supportedCurrencySymbols) {
+      HistoricalDataMapper historicalDataMapper,
+      SupportedCurrencySymbols supportedCurrencySymbols,
+      ArgumentValidator argumentValidator) {
     if (foreignExchange == null) {
       throw new IllegalArgumentException("foreignExchange cannot be null");
     }
@@ -50,10 +53,14 @@ public class CurrencyService {
     if(supportedCurrencySymbols == null){
       throw new IllegalArgumentException("supportedCurrencySymbols cannot be null");
     }
+    if(argumentValidator == null){
+      throw new IllegalArgumentException("argumentValidator cannot be null");
+    }
     this.foreignExchange = foreignExchange;
     this.exchangeDataMapper = exchangeDataMapper;
     this.historicalDataMapper = historicalDataMapper;
     this.supportedCurrencySymbols = supportedCurrencySymbols;
+    this.argumentValidator = argumentValidator;
   }
 
   public Set<String> getSupportedCurrencies() throws ServiceOperationException {
@@ -69,8 +76,8 @@ public class CurrencyService {
 
   public ExchangeData getRateFromGivenCurrencies(String from, String to) throws ServiceOperationException {
     try {
-      ArgumentValidator.ensureNotNull( from, "from");
-      ArgumentValidator.ensureNotNull( to, "to");
+      argumentValidator.ensureNotNull( from, "from");
+      argumentValidator.ensureNotNull( to, "to");
       log.debug("Getting rate for symbols: from: {} - to: {}", from, to);
       CurrencyExchange currencyExchange = foreignExchange.currencyExchangeRate(from, to);
       CurrencyExchangeData currencyExchangeData = currencyExchange.getData();
@@ -85,10 +92,10 @@ public class CurrencyService {
   public List<HistoricalData> getHistoricalDataForGivenCurrenciesAndRange(
       String from, String to, LocalDate fromDate, LocalDate toDate) throws ServiceOperationException {
     try {
-      ArgumentValidator.ensureNotNull( from, "from");
-      ArgumentValidator.ensureNotNull( to, "to");
-      ArgumentValidator.ensureNotNull( fromDate, "fromDate");
-      ArgumentValidator.ensureNotNull( toDate, "toDate");
+      argumentValidator.ensureNotNull( from, "from");
+      argumentValidator.ensureNotNull( to, "to");
+      argumentValidator.ensureNotNull( fromDate, "fromDate");
+      argumentValidator.ensureNotNull( toDate, "toDate");
       if (fromDate.isAfter(toDate)) {
         throw new IllegalArgumentException("toDate cannot be after fromDate");
       }

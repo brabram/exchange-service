@@ -14,7 +14,7 @@ public class ArgumentValidator {
     this.supportedCurrencySymbols = supportedCurrencySymbols;
   }
 
-  public static <T> void ensureNotNull(T argument, String paramName) {
+  public <T> void ensureNotNull(T argument, String paramName) {
     if (argument == null) {
       throw new IllegalArgumentException(String.format("%s cannot be null", paramName));
     }
