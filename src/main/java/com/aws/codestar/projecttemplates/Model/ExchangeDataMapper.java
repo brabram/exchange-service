@@ -10,5 +10,5 @@ public interface ExchangeDataMapper {
   @Mapping(target = "from", source = "fromCurrencyCode")
   @Mapping(target = "to", source = "toCurrencyCode")
   @Mapping(target = "rate", source = "exchangeRate")
-  ExchangeData mapExchange (org.patriques.output.exchange.data.CurrencyExchangeData currencyExchangeData);
+  ExchangeData mapExchange(org.patriques.output.exchange.data.CurrencyExchangeData currencyExchangeData);
 }

@@ -50,10 +50,10 @@ public class CurrencyService {
     if (historicalDataMapper == null) {
       throw new IllegalArgumentException("historicalDataMapper cannot be null");
     }
-    if(supportedCurrencySymbols == null){
+    if (supportedCurrencySymbols == null) {
       throw new IllegalArgumentException("supportedCurrencySymbols cannot be null");
     }
-    if(argumentValidator == null){
+    if (argumentValidator == null) {
       throw new IllegalArgumentException("argumentValidator cannot be null");
     }
     this.foreignExchange = foreignExchange;
@@ -76,8 +76,8 @@ public class CurrencyService {
 
   public ExchangeData getRateFromGivenCurrencies(String from, String to) throws ServiceOperationException {
     try {
-      argumentValidator.ensureNotNull( from, "from");
-      argumentValidator.ensureNotNull( to, "to");
+      argumentValidator.ensureNotNull(from, "from");
+      argumentValidator.ensureNotNull(to, "to");
       log.debug("Getting rate for symbols: from: {} - to: {}", from, to);
       CurrencyExchange currencyExchange = foreignExchange.currencyExchangeRate(from, to);
       CurrencyExchangeData currencyExchangeData = currencyExchange.getData();
@@ -92,10 +92,10 @@ public class CurrencyService {
   public List<HistoricalData> getHistoricalDataForGivenCurrenciesAndRange(
       String from, String to, LocalDate fromDate, LocalDate toDate) throws ServiceOperationException {
     try {
-      argumentValidator.ensureNotNull( from, "from");
-      argumentValidator.ensureNotNull( to, "to");
-      argumentValidator.ensureNotNull( fromDate, "fromDate");
-      argumentValidator.ensureNotNull( toDate, "toDate");
+      argumentValidator.ensureNotNull(from, "from");
+      argumentValidator.ensureNotNull(to, "to");
+      argumentValidator.ensureNotNull(fromDate, "fromDate");
+      argumentValidator.ensureNotNull(toDate, "toDate");
       if (fromDate.isAfter(toDate)) {
         throw new IllegalArgumentException("toDate cannot be after fromDate");
       }

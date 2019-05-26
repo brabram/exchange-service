@@ -33,6 +33,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.client.HttpServerErrorException;
+
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = CurrencyController.class)
 @AutoConfigureMockMvc

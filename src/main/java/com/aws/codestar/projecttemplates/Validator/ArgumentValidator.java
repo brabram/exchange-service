@@ -34,6 +34,7 @@ public class ArgumentValidator {
     }
     return false;
   }
+
   public Boolean validateDate(LocalDate fromDate, LocalDate toDate) {
     return fromDate != null && toDate != null && !fromDate.isAfter(toDate);
   }

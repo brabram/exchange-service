@@ -36,7 +36,6 @@ public class CurrencyController {
   private CurrencyService currencyService;
   private ArgumentValidator argumentValidator;
 
-
   @Autowired
   public CurrencyController(CurrencyService currencyService, ArgumentValidator argumentValidator) {
     this.currencyService = currencyService;
@@ -126,7 +125,7 @@ public class CurrencyController {
         log.debug(message);
         return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.BAD_REQUEST);
       }
-      if (!argumentValidator.validateDate(fromDate, toDate)){
+      if (!argumentValidator.validateDate(fromDate, toDate)) {
         String message = String.format("Passed dates are incorrect: %s, %s", fromDate, toDate);
         log.debug(message);
         return new ResponseEntity<>(new ErrorMessage(message), HttpStatus.BAD_REQUEST);

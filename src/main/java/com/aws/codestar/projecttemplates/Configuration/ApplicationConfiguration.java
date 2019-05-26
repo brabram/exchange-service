@@ -24,18 +24,18 @@ public class ApplicationConfiguration {
   }
 
   @Bean
-  public HistoricalDataMapper getForexDataMapper(){
+  public HistoricalDataMapper getForexDataMapper() {
     return new HistoricalDataMapperImpl();
   }
 
   @Bean
-  public ArgumentValidator getArgumentValidator(){
+  public ArgumentValidator getArgumentValidator() {
     return new ArgumentValidator(new SupportedCurrencySymbols());
   }
 
   @Bean
   @Primary
-  public ObjectMapper getObjectMapper(){
+  public ObjectMapper getObjectMapper() {
     ObjectMapper mapper = new ObjectMapper();
     mapper.registerModule(new JavaTimeModule());
     mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);

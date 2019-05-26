@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 //@PropertySource("classpath:application.properties")
 public class SupportedCurrencySymbols {
 
-//  @Value( "${source.http}" )
+  //  @Value( "${source.http}" )
 //  private String currenciesSource = "source.http";
   private String currenciesSource = "https://openexchangerates.org/api/currencies.json";
 

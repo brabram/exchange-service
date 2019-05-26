@@ -24,10 +24,7 @@ public class HistoricalData {
   public HistoricalData() {
   }
 
-//  @JsonCreator
-  public HistoricalData(/*@JsonProperty("dateTime")*/ LocalDateTime dateTime,
-      /*@JsonProperty("open")*/ double open, /*@JsonProperty("high") */double high,
-      /*@JsonProperty("low") */double low,/* @JsonProperty("close")*/ double close) {
+  public HistoricalData(LocalDateTime dateTime, double open, double high, double low, double close) {
     this.dateTime = dateTime;
     this.open = open;
     this.high = high;
