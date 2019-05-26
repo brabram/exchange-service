@@ -60,6 +60,7 @@
       <groupId>org.patriques</groupId>
       <artifactId>alphavantage4j</artifactId>
       <version>1.4</version>
+<!--      <type>pom</type>-->
     </dependency>
     <dependency>
       <groupId>io.springfox</groupId>
