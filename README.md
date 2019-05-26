@@ -24,7 +24,7 @@ Done
  - Application should be unit tested
  - The web application will use the following API as its data source for historical values: https://www.alphavantage.co/documentation/#fx-daily
  - The web application will use the following API as its data source for real-time values: https://www.alphavantage.co/documentation/#currency-exchange
- - As a developer, I must be able to select currencies (available in the [](https://openexchangerates.org/api/currencies.json) to exchange)
+ - As a developer, I must be able to select currencies (available in the https://openexchangerates.org/api/currencies.json to exchange)
  - As a developer, I am able to see the current exchange rate for selected currencies pair
  - As a developer, I am able to see the exchange rate historical chart for selected currencies pair
 
